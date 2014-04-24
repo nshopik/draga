@@ -11,7 +11,8 @@
         padding: 0px
       }
     </style>
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+    <script src="//maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
     <script>
 // This example creates a 2-pixel-wide red polyline showing
 // the path of William Kingsford Smith's first trans-Pacific flight between
@@ -27,13 +28,32 @@ function initialize() {
   var map = new google.maps.Map(document.getElementById('map-canvas'),
       mapOptions);
 
-  var flightPlanCoordinates = [
-    new google.maps.LatLng(37.772323, -122.214897),
-    new google.maps.LatLng(21.291982, -157.821856),
-    new google.maps.LatLng(-18.142599, 178.431),
-    new google.maps.LatLng(-27.46758, 153.027892)
-  ];
-  var flightPath = new google.maps.Polyline({
+  
+  var flightPlanCoordinates = [];
+
+_.each([
+ {lat: 37.772323, lng: -122.214897, title: "03-Jan-2014 23:31:22 UTC", content: 'научись комьютером пользоваться'},
+ {lat: 21.291982, lng: -157.821856, title: "03-Jan-2014 23:31:22 UTC", content: 'Серьезно!'},
+ {lat: -18.142599, lng: 178.431, title: "03-Jan-2014 23:31:22 UTC", content: 'Какой же ты тупой'},
+ {lat: -27.46758, lng: 153.027892, title: "03-Jan-2014 23:31:22 UTC", content: 'Как бы всё работает'}
+], function (obj) {
+  var latLng = new google.maps.LatLng(obj.lat, obj.lng); 
+  flightPlanCoordinates.push(latLng);
+
+  var marker = new google.maps.Marker({
+    position: latLng,
+    map: map,
+    title: obj.title
+  });
+  var infowindow = new google.maps.InfoWindow({
+    content: obj.content,
+  });
+  google.maps.event.addListener(marker, 'click', function() {
+    infowindow.open(map, marker);
+  });
+});
+
+var flightPath = new google.maps.Polyline({
     path: flightPlanCoordinates,
     geodesic: true,
     strokeColor: '#FF0000',
@@ -41,39 +61,6 @@ function initialize() {
     strokeWeight: 2
   });
 
-  var marker = new google.maps.Marker({
-    position: new google.maps.LatLng(37.772323, -122.214897),
-    map: map,
-    title:"03-Jan-2014 23:31:22 UTC"
-  });
-  var marker2 = new google.maps.Marker({
-    position: new google.maps.LatLng(21.291982, -157.821856),
-    map: map,
-    title:"03-Jan-2014 23:31:22 UTC"
-  });
-  var marker3 = new google.maps.Marker({
-    position: new google.maps.LatLng(-18.142599, 178.431),
-    map: map,
-    title:"03-Jan-2014 23:31:22 UTC"
-  });
-var infowindow = new google.maps.InfoWindow({
-    content: 'научись комьютером пользоваться',
-});
-eventPolygonClick = google.maps.event.addListener(marker, 'click', function() {
-  infowindow.open(map, marker);
-});
-var infowindow2 = new google.maps.InfoWindow({
-    content: 'Серьезно!',
-});
-eventPolygonClick = google.maps.event.addListener(marker2, 'click', function() {
-  infowindow2.open(map, marker2);
-});
-var infowindow3 = new google.maps.InfoWindow({
-    content: 'Какой же ты тупой',
-});
-eventPolygonClick = google.maps.event.addListener(marker3, 'click', function() {
-  infowindow3.open(map, marker3);
-});
 
   flightPath.setMap(map);
 }

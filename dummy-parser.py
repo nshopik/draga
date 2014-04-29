@@ -23,7 +23,7 @@ for index in range(len(UTC)):
 	TIME.append(UTC[index][0] + " " + UTC[index][1] + " " + UTC[index][2])
 data = []
 for index in range(len(MSG)):
-	data.append({'lat':LAT[index], 'lng':LON[index], 'title':TIME[index], 'content':'no msg'})
+	data.append({'lat':LAT[index], 'lng':LON[index], 'title':TIME[index], 'content':' '.join(TXT[index])})
 
 j = json.dumps(data, indent=2)
 f = open('map.json', 'w')

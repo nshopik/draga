@@ -1,11 +1,31 @@
 #!/usr/bin/env python
 import re
-f = open("iridum.mail")
-lines = f.read()
-LON=lines.splitlines()
-TIME=LON[-1].split(" ")
-POSITION=re.split('=|&',LON[-1])
-LAT=(POSITION[-3])
-LON=(POSITION[-1])
-print(LAT,LON,TIME[-4:-1])
-f.close
+import json
+RAWDATA = []
+for line in open("../draga_mail"):
+	if "http://" in line:
+		RAWDATA.append(line)
+MSG = [i.split(" ") for i in RAWDATA]
+UTC = []
+URL = []
+TXT = []
+LAT = []
+LON = []
+TIME = []
+for index in range(len(MSG)):
+	UTC.append(MSG[index][7:10])
+	URL.append(re.split('=|&', MSG[index][10]))	
+	TXT.append(MSG[index][11:])
+for index in range(len(URL)):
+	LAT.append(URL[index][1])
+	LON.append(URL[index][3])
+for index in range(len(UTC)):
+	TIME.append(UTC[index][0] + " " + UTC[index][1] + " " + UTC[index][2])
+data = []
+for index in range(len(MSG)):
+	data.append({'lat':LAT[index], 'lng':LON[index], 'title':TIME[index], 'content':'no msg'})
+
+j = json.dumps(data, indent=2)
+f = open('map.json', 'w')
+print >> f, j
+f.close()

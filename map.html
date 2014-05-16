@@ -29,10 +29,12 @@ $(function () {
 		});
 
 		var flightPlanCoordinates = [];
+		var latLng, latLngBounds = new google.maps.LatLngBounds();
 
 		_.each(data, function (obj) {
-			var latLng = new google.maps.LatLng(obj.lat, obj.lng); 
+			latLng = new google.maps.LatLng(obj.lat, obj.lng);
 			flightPlanCoordinates.push(latLng);
+			latLngBounds.extend(latLng);
 
 			var marker = new google.maps.Marker({
 				position: latLng,
@@ -58,6 +60,9 @@ $(function () {
 		});
 
 		flightPath.setMap(map);
+
+		map.fitBounds(latLngBounds);
+		latLng && map.panTo(latLng);
 	});
 });
 
